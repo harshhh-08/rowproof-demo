@@ -854,9 +854,14 @@
             </svg>
             Configuration
           </div>
-          <button class="editor-toggle" onclick="toggleRawEditor()">
-            <span id="editorToggleLabel">Edit CSV text ▾</span>
-          </button>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <button class="editor-toggle" onclick="toggleRawEditor()">
+              <span id="editorToggleLabel">Edit CSV text ▾</span>
+            </button>
+            <button class="editor-toggle" onclick="clearLoadedFile()" style="color:var(--text-muted);" onmouseover="this.style.color='var(--error)'" onmouseout="this.style.color='var(--text-muted)'" title="Clear CSV and reset results">
+              ✕ Clear
+            </button>
+          </div>
         </div>
 
         <div class="panel-body">
@@ -1361,6 +1366,18 @@
     function clearLoadedFile() {
       document.getElementById("fileMeta").classList.remove("active");
       document.getElementById("csvTextInput").value = "";
+      const fileInput = document.getElementById("fileInput");
+      if (fileInput) fileInput.value = "";
+      resetResults();
+    }
+
+    function resetResults() {
+      currentReport = null;
+      document.getElementById("emptyState").style.display = "flex";
+      document.getElementById("resultsContent").classList.remove("active");
+      document.getElementById("btnExport").style.display = "none";
+      const tbody = document.getElementById("issuesTableBody");
+      if (tbody) tbody.innerHTML = "";
     }
 
     // File Drop & Select
@@ -1403,6 +1420,17 @@
     }
 
     // Validation Execution
+    document.addEventListener("DOMContentLoaded", () => {
+      const csvArea = document.getElementById("csvTextInput");
+      if (csvArea) {
+        csvArea.addEventListener("input", () => {
+          if (!csvArea.value.trim()) {
+            clearLoadedFile();
+          }
+        });
+      }
+    });
+
     async function triggerValidation() {
       const csvText = document.getElementById("csvTextInput").value.trim();
       if (!csvText) {
@@ -1437,6 +1465,7 @@
 
         if (res.ok && res.headers.get("content-type")?.includes("json")) {
           const apiReport = await res.json();
+          // Merge stats if totalRows calculated
           const parsed = parseCSV(csvText);
           const local = validateCSV(parsed, options);
           currentReport = {
@@ -1445,6 +1474,7 @@
             invalidRows: local.invalidRows
           };
         } else {
+          // Client execution fallback
           currentReport = validateCSV(parseCSV(csvText), options);
         }
       } catch (err) {
