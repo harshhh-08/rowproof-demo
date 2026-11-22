@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RowProof Demo — CSV Data Quality Validator</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      background: #e2e8f0;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      transition: all 0.2s;
+    }
+    .badge:hover { background: #cbd5e1; }
+    .badge-npm { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+    .badge-github { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      transition: all 0.15s ease-in-out;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .btn-preset {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid var(--border);
+    }
+    .btn-preset:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: #f8fafc;
+      color: var(--text);
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: #fdfdfd;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+    textarea:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 640px) {
+      .rules-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+    }
+
+    .status-banner {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .status-valid {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .status-invalid {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 700;
+    }
+    tr:hover { background: #fdfdfd; }
+
+    .tag-rule {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>RowProof Demo</h1>
+      <p class="tagline">Validate your rows. Trust your data.</p>
+      <div class="badges">
+        <a class="badge badge-npm" href="https://www.npmjs.com/package/rowproof" target="_blank">
+          📦 npm: rowproof@1.0.0
+        </a>
+        <a class="badge badge-github" href="https://github.com/harshhh-08/rowproof" target="_blank">
+          📂 Source Code
+        </a>
+        <a class="badge badge-github" href="https://github.com/harshhh-08/rowproof-demo" target="_blank">
+          ⭐ Demo Repository
+        </a>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="section-title">
+        <span>1. Select a Sample Dataset or Enter CSV</span>
+        <label for="csvFileInput" class="btn-preset" style="padding: 0.3rem 0.7rem; font-size: 0.8rem; cursor: pointer;">
+          📁 Upload File
+        </label>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+      </div>
+
+      <div class="preset-buttons">
+        <button class="btn-preset" onclick="loadCleanData()">✅ Preset 1: Clean Data (Valid)</button>
+        <button class="btn-preset" onclick="loadDirtyData()">⚠️ Preset 2: Dirty Data (6 Defects)</button>
+        <button class="btn-preset" onclick="loadSchemaMismatch()">❌ Preset 3: Missing Header Column</button>
+      </div>
+
+      <textarea id="csvInput" placeholder="Paste CSV text here or choose a preset..."></textarea>
+
+      <div class="section-title">2. Configure Validation Rules</div>
+      <div class="rules-grid">
+        <div class="form-group">
+          <label>Required Columns (comma-separated):</label>
+          <input type="text" id="requiredCols" value="id, name, email, age">
+        </div>
+        <div class="form-group">
+          <label>Unique Columns (comma-separated):</label>
+          <input type="text" id="uniqueCols" value="email">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem;">
+        <button class="btn-primary" id="validateBtn" onclick="runValidation()">⚡ Validate Rows with RowProof</button>
+        <button class="btn-secondary" onclick="resetForm()">Clear</button>
+        <span id="loadingSpinner" class="hidden" style="font-size: 0.9rem; color: var(--muted);">Validating...</span>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsCard" class="card hidden">
+      <div class="section-title">
+        <span>Validation Report</span>
+        <button class="btn-preset" onclick="downloadJSON()" style="font-size: 0.8rem;">📥 Export Report JSON</button>
+      </div>
+
+      <div id="statusBanner" class="status-banner"></div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="value" id="statRows">0</div>
+          <div class="label">Rows Processed</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statErrors">0</div>
+          <div class="label">Errors Found</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="statValid">0</div>
+          <div class="label">Status</div>
+        </div>
+      </div>
+
+      <div id="issuesContainer">
+        <h4 style="margin-bottom: 0.5rem; color: #334155;">Detected Data Issues</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 70px;">Row</th>
+              <th style="width: 140px;">Column</th>
+              <th style="width: 160px;">Rule Violation</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="errorsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let lastReport = null;
+
+    const CLEAN_CSV = `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,Diya Patel,diya@university.edu,22,true
+103,Rohan Verma,rohan@university.edu,20,false`;
+
+    const DIRTY_CSV = `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,,diya@university.edu,not_a_number,true
+103,Rohan Verma,aarav@university.edu,20,yes
+104,Priya Singh,priya@university.edu,23,true
+101,Aarav Sharma,aarav@university.edu,21,true
+,,`;
+
+    const SCHEMA_MISMATCH_CSV = `id,fullName,phone
+1,Alice Johnson,+1-555-0100
+2,Bob Williams,+1-555-0101`;
+
+    function loadCleanData() {
+      document.getElementById("csvInput").value = CLEAN_CSV;
+      document.getElementById("requiredCols").value = "id, name, email, age";
+      document.getElementById("uniqueCols").value = "id, email";
+      runValidation();
+    }
+
+    function loadDirtyData() {
+      document.getElementById("csvInput").value = DIRTY_CSV;
+      document.getElementById("requiredCols").value = "id, name, email, age";
+      document.getElementById("uniqueCols").value = "email";
+      runValidation();
+    }
+
+    function loadSchemaMismatch() {
+      document.getElementById("csvInput").value = SCHEMA_MISMATCH_CSV;
+      document.getElementById("requiredCols").value = "id, fullName, email";
+      document.getElementById("uniqueCols").value = "";
+      runValidation();
+    }
+
+    function resetForm() {
+      document.getElementById("csvInput").value = "";
+      document.getElementById("resultsCard").classList.add("hidden");
+    }
+
+    document.getElementById("csvFileInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("csvInput").value = evt.target.result;
+        runValidation();
+      };
+      reader.readAsText(file);
+    });
+
+    async function runValidation() {
+      const csvText = document.getElementById("csvInput").value.trim();
+      if (!csvText) {
+        alert("Please paste CSV data or choose a preset first.");
+        return;
+      }
+
+      const required = document.getElementById("requiredCols").value
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const unique = document.getElementById("uniqueCols").value
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const types = {
+        id: "integer",
+        age: "number",
+        email: "email",
+        enrolled: "boolean"
+      };
+
+      document.getElementById("loadingSpinner").classList.remove("hidden");
+
+      try {
+        const response = await fetch("/api/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ csvText, options: { required, unique, types } })
+        });
+
+        const report = await response.json();
+        lastReport = report;
+        renderReport(report);
+      } catch (err) {
+        alert("Validation request failed: " + err.message);
+      } finally {
+        document.getElementById("loadingSpinner").classList.add("hidden");
+      }
+    }
+
+    function renderReport(report) {
+      const resultsCard = document.getElementById("resultsCard");
+      resultsCard.classList.remove("hidden");
+
+      const statusBanner = document.getElementById("statusBanner");
+      if (report.isValid) {
+        statusBanner.className = "status-banner status-valid";
+        statusBanner.innerHTML = "<span>✅ All Rows Valid! No Data Quality Defects Found.</span>";
+      } else {
+        statusBanner.className = "status-banner status-invalid";
+        statusBanner.innerHTML = `<span>⚠️ Validation Failed: ${report.totalErrors} Data Quality Issue(s) Detected</span>`;
+      }
+
+      document.getElementById("statRows").textContent = report.totalRows;
+      document.getElementById("statErrors").textContent = report.totalErrors;
+      document.getElementById("statValid").textContent = report.isValid ? "PASS" : "FAIL";
+
+      const tbody = document.getElementById("errorsTableBody");
+      tbody.innerHTML = "";
+
+      const issuesContainer = document.getElementById("issuesContainer");
+      if (report.errors.length === 0) {
+        issuesContainer.classList.add("hidden");
+      } else {
+        issuesContainer.classList.remove("hidden");
+        report.errors.forEach(err => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${err.row !== null ? err.row : "Header"}</strong></td>
+            <td><code>${err.column || "—"}</code></td>
+            <td><span class="tag-rule">${err.rule}</span></td>
+            <td>${err.message}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function downloadJSON() {
+      if (!lastReport) return;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(lastReport, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "validation-report.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Auto-load dirty preset on launch
+    window.onload = loadDirtyData;
+  </script>
+</body>
+</html>
