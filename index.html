@@ -3,70 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RowProof — CSV Data Quality Validator Demo</title>
+  <title>RowProof — CSV Data Quality Validator</title>
+  <meta name="description" content="Catch missing values, duplicate records, invalid types, and structural issues before they become problems.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --primary-light: #eef2ff;
-      --success: #10b981;
-      --success-light: #ecfdf5;
-      --danger: #ef4444;
-      --danger-light: #fef2f2;
-      --warning: #f59e0b;
-      --warning-light: #fffbeb;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text: #111827;
+      --text-muted: #64748B;
+      --text-subtle: #94A3B8;
+      --border: #E2E8F0;
+      --border-focus: #CBD5E1;
+      
+      --accent: #10B981;
+      --accent-hover: #059669;
+      --accent-light: #ECFDF5;
+      --accent-border: #A7F3D0;
+      --accent-dark: #065F46;
+
+      --error: #EF4444;
+      --error-light: #FEF2F2;
+      --error-border: #FECACA;
+      --error-dark: #991B1B;
+
+      --warning: #F59E0B;
+      --warning-light: #FFFBEB;
+      --warning-border: #FDE68A;
+      --warning-dark: #92400E;
+
+      --radius: 10px;
+      --radius-sm: 6px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+      --shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.03);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Evaluation Banner */
-    .eval-banner {
-      background: linear-gradient(90deg, #1e1b4b, #312e81);
-      color: #e0e7ff;
-      padding: 0.55rem 1rem;
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .eval-banner span {
-      background: rgba(255,255,255,0.15);
-      padding: 0.15rem 0.5rem;
-      border-radius: 9999px;
-      margin-right: 0.5rem;
+    /* Top Navigation */
+    header.navbar {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
-    /* Navigation */
-    nav {
+    .nav-inner {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1.25rem 1.5rem;
+      padding: 0 1.5rem;
+      height: 64px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      justify-content: space-between;
     }
 
-    .brand {
+    .brand-wrap {
       display: flex;
       align-items: center;
       gap: 0.75rem;
@@ -74,575 +79,1078 @@
       color: var(--text);
     }
 
-    .logo-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-weight: 800;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
     }
+    .brand-icon svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
-    .brand-title {
-      font-size: 1.35rem;
-      font-weight: 800;
+    .brand-name {
+      font-size: 1.125rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
     }
-    .brand-subtitle {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+
+    .badge-subtle {
+      font-size: 0.6875rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
     }
 
-    .nav-links {
+    .nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 1.25rem;
     }
 
-    .pill-link {
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link svg { width: 16px; height: 16px; }
+
+    .btn-nav-action {
+      background: var(--accent);
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.5rem 0.95rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+      border: none;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.45rem 0.85rem;
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-      border: 1px solid var(--border);
-      background: white;
-      color: #334155;
     }
-    .pill-link:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .pill-npm {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: #dc2626;
-    }
-    .pill-npm:hover { background: #fee2e2; }
+    .btn-nav-action:hover { background: var(--accent-hover); }
 
-    /* Hero */
+    /* Hero Section */
     .hero {
-      text-align: center;
-      padding: 2rem 1.5rem 2.5rem;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
+      padding: 3.5rem 1.5rem 2.5rem;
+      text-align: center;
     }
 
-    .hero-badge {
+    .pill-label {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: 0.35rem 0.85rem;
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
+      gap: 0.45rem;
+      padding: 0.3rem 0.8rem;
+      background: var(--accent-light);
+      border: 1px solid var(--accent-border);
+      color: var(--accent-dark);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+    }
+    .pill-label .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
     }
 
     .hero h1 {
       font-size: 2.75rem;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.035em;
       line-height: 1.15;
-      margin-bottom: 0.75rem;
-      color: #0f172a;
-    }
-
-    .hero h1 .gradient-text {
-      background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text);
+      margin-bottom: 1rem;
     }
 
     .hero p {
-      font-size: 1.15rem;
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 1.75rem;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      padding: 0.65rem 1.35rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-secondary:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
+    .trust-strip {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.75rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .trust-item svg { width: 14px; height: 14px; color: var(--accent); }
+
+    /* Workspace Dashboard Layout */
+    .workspace-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3.5rem;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFFFFF;
+    }
+
+    .panel-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-body {
+      padding: 1.25rem;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 1rem;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .dropzone-icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 0.5rem;
+      color: var(--text-muted);
+      background: white;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dropzone p {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .dropzone span {
+      font-size: 0.75rem;
       color: var(--text-muted);
     }
 
-    /* Main Container */
-    .container {
+    .file-meta-pill {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      background: #F1F5F9;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      margin-bottom: 1rem;
+    }
+    .file-meta-pill.active { display: flex; }
+    .file-meta-pill .fname { font-weight: 600; color: var(--text); }
+    .file-meta-pill .fsize { color: var(--text-muted); font-size: 0.75rem; }
+
+    /* Collapsible CSV Textarea */
+    .editor-toggle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.5rem;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .editor-toggle:hover { color: var(--text); }
+
+    .csv-textarea {
+      width: 100%;
+      height: 140px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #FAFAFA;
+      color: #1F2937;
+      line-height: 1.5;
+      resize: vertical;
+      margin-bottom: 1.25rem;
+    }
+    .csv-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-light);
+    }
+
+    /* Form Fields */
+    .field-group {
+      margin-bottom: 1rem;
+    }
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.35rem;
+    }
+    .field-label span.subtle {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+    .field-input {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.8125rem;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-light);
+    }
+
+    /* Action Button */
+    .btn-validate-main {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--accent);
+      color: white;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.15s, transform 0.05s;
+      margin-top: 0.5rem;
+    }
+    .btn-validate-main:hover { background: var(--accent-hover); }
+    .btn-validate-main:active { transform: scale(0.99); }
+
+    /* Results Panel - Right Side */
+    .results-panel {
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Empty State */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .empty-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: #F1F5F9;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .empty-icon svg { width: 28px; height: 28px; }
+    .empty-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+    .empty-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      max-width: 320px;
+    }
+
+    /* Active Results View */
+    .results-content { display: none; }
+    .results-content.active { display: block; }
+
+    .status-alert {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .status-alert.pass {
+      background: var(--accent-light);
+      border: 1px solid var(--accent-border);
+      color: var(--accent-dark);
+    }
+    .status-alert.fail {
+      background: var(--error-light);
+      border: 1px solid var(--error-border);
+      color: var(--error-dark);
+    }
+    .status-alert-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+
+    /* Metric Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 640px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .metric-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      text-align: center;
+    }
+    .metric-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .metric-num.danger { color: var(--error); }
+    .metric-num.success { color: var(--accent); }
+    .metric-title {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Filter Chips Bar */
+    .filters-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .chips-group {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .chip {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover { border-color: #CBD5E1; color: var(--text); }
+    .chip.active {
+      background: #111827;
+      color: white;
+      border-color: #111827;
+    }
+
+    .btn-download-report {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #374151;
+      transition: all 0.15s;
+    }
+    .btn-download-report:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
+    /* Issue Table */
+    .table-container {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      text-align: left;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #F8FAFC;
+      padding: 0.65rem 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #FAFAFA; }
+
+    /* Issue Badges */
+    .badge-rule {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .badge-missing { background: #FEE2E2; color: #991B1B; }
+    .badge-duplicate { background: #EDE9FE; color: #5B21B6; }
+    .badge-type { background: #FEF3C7; color: #92400E; }
+    .badge-empty { background: #F1F5F9; color: #475569; }
+
+    /* Example Scenarios Section */
+    .scenarios-section {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 1.5rem 4rem;
     }
 
-    .workspace-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+    .section-headline {
+      margin-bottom: 1.5rem;
     }
-
-    @media (max-width: 960px) {
-      .workspace-grid { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1.75rem;
-      box-shadow: var(--shadow);
-      transition: all 0.2s;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .card-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* Preset Buttons */
-    .preset-container {
-      margin-bottom: 1rem;
-    }
-    .preset-label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
-    }
-    .preset-tabs {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-tab {
-      padding: 0.5rem 0.85rem;
-      border-radius: 0.5rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      color: #334155;
-      transition: all 0.15s;
-    }
-    .btn-tab:hover {
-      background: #e2e8f0;
-    }
-    .btn-tab.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-      box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
-    }
-
-    /* Code Editor Box */
-    .editor-wrapper {
-      position: relative;
-    }
-
-    textarea {
-      width: 100%;
-      height: 220px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.875rem;
-      padding: 1rem;
-      background: #0f172a;
-      color: #f8fafc;
-      border-radius: 0.75rem;
-      border: 1px solid #334155;
-      line-height: 1.6;
-      resize: vertical;
-      white-space: pre;
-    }
-    textarea:focus {
-      outline: 2px solid var(--primary);
-      border-color: transparent;
-    }
-
-    /* Rules Settings */
-    .rule-item {
-      margin-bottom: 1.25rem;
-    }
-    .rule-item label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #334155;
-      margin-bottom: 0.35rem;
-    }
-    .rule-item input {
-      width: 100%;
-      padding: 0.65rem 0.85rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      background: #f8fafc;
-      color: #0f172a;
-      transition: all 0.15s;
-    }
-    .rule-item input:focus {
-      background: white;
-      outline: 2px solid var(--primary);
-      border-color: transparent;
-    }
-    .rule-hint {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    /* Validate Button */
-    .btn-run {
-      width: 100%;
-      padding: 0.9rem;
-      border: none;
-      border-radius: 0.75rem;
-      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-      color: white;
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    .btn-run:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.45);
-    }
-    .btn-run:active {
-      transform: translateY(0);
-    }
-
-    /* Results Dashboard */
-    .results-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: var(--shadow-lg);
-      margin-top: 1rem;
-    }
-
-    .status-header {
-      padding: 1.25rem 1.5rem;
-      border-radius: 0.85rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.75rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .status-pass {
-      background: var(--success-light);
-      border: 1px solid #a7f3d0;
-      color: #065f46;
-    }
-    .status-fail {
-      background: var(--danger-light);
-      border: 1px solid #fecaca;
-      color: #991b1b;
-    }
-    .status-title {
-      font-size: 1.35rem;
+    .section-headline h2 {
+      font-size: 1.5rem;
       font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .section-headline p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
     }
 
-    .kpi-grid {
+    .scenarios-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 2rem;
     }
-    @media (max-width: 768px) {
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 960px) {
+      .scenarios-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .scenarios-grid { grid-template-columns: 1fr; }
     }
 
-    .kpi-card {
-      background: #f8fafc;
+    .scenario-card {
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 1.25rem 1rem;
-      text-align: center;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .kpi-value {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1;
+    .scenario-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .sc-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text);
       margin-bottom: 0.4rem;
     }
-    .kpi-label {
+    .sc-desc {
       font-size: 0.75rem;
-      font-weight: 700;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      line-height: 1.45;
+      margin-bottom: 1rem;
     }
-
-    /* Table */
-    .table-responsive {
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.9rem;
-    }
-    th {
-      background: #f1f5f9;
-      color: #334155;
-      padding: 0.85rem 1rem;
-      font-weight: 700;
-      border-bottom: 1px solid var(--border);
-    }
-    td {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--border);
-      color: #1e293b;
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f8fafc; }
-
-    .tag-rule {
-      display: inline-block;
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
+    .sc-btn {
       font-size: 0.75rem;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: 0.02em;
-    }
-    .tag-missing { background: #fee2e2; color: #991b1b; }
-    .tag-type { background: #fef3c7; color: #92400e; }
-    .tag-unique { background: #ede9fe; color: #5b21b6; }
-    .tag-empty { background: #f1f5f9; color: #475569; }
-
-    .btn-export {
-      padding: 0.5rem 1rem;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
       font-weight: 600;
-      font-size: 0.85rem;
-      color: #334155;
-      cursor: pointer;
-      display: inline-flex;
+      color: var(--accent);
+      display: flex;
       align-items: center;
-      gap: 0.4rem;
-      transition: all 0.15s;
-    }
-    .btn-export:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
+      gap: 0.25rem;
     }
 
-    footer {
-      text-align: center;
-      padding: 2.5rem 1rem 1rem;
-      color: var(--text-muted);
-      font-size: 0.875rem;
+    /* Footer */
+    footer.site-footer {
+      background: white;
       border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+    }
+    .footer-inner {
       max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
     }
-
-    .hidden { display: none !important; }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .footer-brand .name {
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+    .footer-brand .tag {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text); }
   </style>
 </head>
 <body>
 
-  <!-- Academic Evaluation Header -->
-  <div class="eval-banner">
-    <span>🎓 ACADEMIC PROJECT EVALUATION</span> RowProof Live Deployment Demonstration — CSE BTech Capstone
-  </div>
-
-  <!-- Navigation -->
-  <nav>
-    <a href="#" class="brand">
-      <div class="logo-badge">RP</div>
-      <div>
-        <div class="brand-title">RowProof</div>
-        <div class="brand-subtitle">CSV Data Quality Validator</div>
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <a href="#" class="brand-wrap">
+          <div class="brand-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <span class="brand-name">RowProof</span>
+        </a>
+        <span class="badge-subtle">CSV VALIDATOR</span>
       </div>
-    </a>
-    <div class="nav-links">
-      <a class="pill-link pill-npm" href="https://www.npmjs.com/package/rowproof" target="_blank">
-        📦 npm rowproof@1.0.0
-      </a>
-      <a class="pill-link" href="https://github.com/harshhh-08/rowproof" target="_blank">
-        📂 Source Code
-      </a>
-      <a class="pill-link" href="https://github.com/harshhh-08/rowproof-demo" target="_blank">
-        ⭐ Demo Repository
-      </a>
+
+      <div class="nav-actions">
+        <a class="nav-link" href="https://github.com/harshhh-08/rowproof#readme" target="_blank">
+          Documentation
+        </a>
+        <a class="nav-link" href="https://github.com/harshhh-08/rowproof" target="_blank">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a class="btn-nav-action" href="https://www.npmjs.com/package/rowproof" target="_blank">
+          <span>📦 npm rowproof@1.0.0</span>
+        </a>
+      </div>
     </div>
-  </nav>
+  </header>
 
   <!-- Hero Section -->
   <section class="hero">
-    <div class="hero-badge">⚡ Published npm Package in Action</div>
-    <h1>Validate your rows. <br><span class="gradient-text">Trust your data.</span></h1>
-    <p>Test CSV data quality with missing value checks, schema validation, type constraints, and duplicate row detection.</p>
+    <div class="pill-label">
+      <span class="dot"></span>
+      DATA QUALITY TOOL
+    </div>
+    <h1>Your CSV data, verified.</h1>
+    <p>Catch missing values, duplicate records, invalid types, and structural issues before they become problems.</p>
+    
+    <div class="hero-actions">
+      <a href="#workspace" class="btn-primary">
+        Start validating
+        <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
+      </a>
+      <a href="https://github.com/harshhh-08/rowproof" target="_blank" class="btn-secondary">
+        View on GitHub
+      </a>
+    </div>
+
+    <div class="trust-strip">
+      <div class="trust-item">
+        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Simple
+      </div>
+      <div class="trust-item">
+        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Fast (sub-millisecond)
+      </div>
+      <div class="trust-item">
+        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Developer-friendly
+      </div>
+      <div class="trust-item">
+        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        RFC 4180 Compliant
+      </div>
+    </div>
   </section>
 
-  <!-- Workspace Container -->
-  <div class="container">
+  <!-- Main Validation Workspace -->
+  <main class="workspace-wrap" id="workspace">
     <div class="workspace-grid">
-      
-      <!-- Left Column: CSV Editor -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">📄 CSV Input Dataset</div>
-          <label for="csvFileInput" class="btn-export" style="cursor: pointer;">
-            📁 Upload .csv
-          </label>
-          <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+
+      <!-- LEFT SIDE: Configuration Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg style="width:18px;height:18px;color:var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            Configuration
+          </div>
+          <button class="editor-toggle" onclick="toggleRawEditor()">
+            <span id="editorToggleLabel">Edit CSV text ▾</span>
+          </button>
         </div>
 
-        <div class="preset-container">
-          <div class="preset-label">Choose an Evaluator Test Scenario:</div>
-          <div class="preset-tabs">
-            <button class="btn-tab active" id="tabDirty" onclick="loadDirtyPreset()">⚠️ Scenario 1: Dirty CSV (6 Defects)</button>
-            <button class="btn-tab" id="tabClean" onclick="loadCleanPreset()">✅ Scenario 2: Clean CSV (All Valid)</button>
-            <button class="btn-tab" id="tabMissing" onclick="loadSchemaMismatchPreset()">❌ Scenario 3: Missing Header</button>
-          </div>
-        </div>
-
-        <div class="editor-wrapper">
-          <textarea id="csvInput" placeholder="Enter or paste CSV rows here..."></textarea>
-        </div>
-      </div>
-
-      <!-- Right Column: Validation Rules & Controls -->
-      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div class="card-header">
-            <div class="card-title">⚙️ Data Quality Rules</div>
-            <button class="btn-export" onclick="resetDefaults()" style="font-size: 0.75rem;">Reset Rules</button>
+        <div class="panel-body">
+          <!-- Drag & Drop Upload Zone -->
+          <div class="dropzone" id="dropArea" onclick="document.getElementById('fileInput').click()">
+            <div class="dropzone-icon">
+              <svg style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            </div>
+            <p>Drag and drop your CSV file here</p>
+            <span>or <strong style="color:var(--accent);">browse files</strong> from your computer</span>
+            <input type="file" id="fileInput" accept=".csv" style="display:none">
           </div>
 
-          <div class="rule-item">
-            <label>Required Columns:</label>
-            <input type="text" id="requiredCols" value="id, name, email, age">
-            <div class="rule-hint">Headers must exist and row values must not be blank.</div>
+          <!-- File Meta Pill -->
+          <div class="file-meta-pill" id="fileMeta">
+            <div>
+              <span class="fname" id="fileMetaName">sample.csv</span>
+              <span class="fsize" id="fileMetaSize">(340 bytes)</span>
+            </div>
+            <button onclick="clearLoadedFile()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.75rem;">✕</button>
           </div>
 
-          <div class="rule-item">
-            <label>Unique Columns:</label>
-            <input type="text" id="uniqueCols" value="email">
-            <div class="rule-hint">Flags rows containing duplicate entries for these columns.</div>
+          <!-- Raw CSV Textarea (Collapsible) -->
+          <div id="rawEditorWrap">
+            <textarea id="csvTextInput" class="csv-textarea" placeholder="Paste raw CSV content here..."></textarea>
           </div>
 
-          <div class="rule-item">
-            <label>Enforced Data Types:</label>
-            <input type="text" id="typesCols" value="id: integer, age: number, email: email, enrolled: boolean">
-            <div class="rule-hint">Supported: <code>number</code>, <code>integer</code>, <code>boolean</code>, <code>email</code>, <code>date</code>.</div>
+          <!-- Rule Controls -->
+          <div class="field-group">
+            <label class="field-label">
+              <span>Required Columns</span>
+              <span class="subtle">Must exist & cannot be blank</span>
+            </label>
+            <input type="text" id="ruleRequired" class="field-input" value="id, name, email, age">
           </div>
-        </div>
 
-        <div>
-          <button class="btn-run" id="btnValidate" onclick="executeValidation()">
-            <span>⚡ Validate Rows with RowProof</span>
+          <div class="field-group">
+            <label class="field-label">
+              <span>Unique Columns</span>
+              <span class="subtle">Disallow duplicate values</span>
+            </label>
+            <input type="text" id="ruleUnique" class="field-input" value="email">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span>Enforced Data Types</span>
+              <span class="subtle">number, integer, boolean, email, date</span>
+            </label>
+            <input type="text" id="ruleTypes" class="field-input" value="id: integer, age: number, email: email, enrolled: boolean">
+          </div>
+
+          <button class="btn-validate-main" id="btnValidate" onclick="triggerValidation()">
+            <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Validate CSV
           </button>
         </div>
       </div>
 
+      <!-- RIGHT SIDE: Results Panel -->
+      <div class="panel results-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg style="width:18px;height:18px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Validation Results
+          </div>
+          <button class="btn-download-report" id="btnExport" onclick="downloadJSONReport()" style="display:none;">
+            <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export JSON
+          </button>
+        </div>
+
+        <div class="panel-body" style="flex: 1; display: flex; flex-direction: column;">
+          
+          <!-- Empty State (Shown before first validation) -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+            </div>
+            <div class="empty-title">Your validation results will appear here</div>
+            <div class="empty-desc">Upload a CSV file or click one of the example scenarios below to run the validator.</div>
+          </div>
+
+          <!-- Active Results Container -->
+          <div class="results-content" id="resultsContent">
+            
+            <!-- Status Alert -->
+            <div class="status-alert fail" id="statusAlert">
+              <div class="status-alert-left" id="statusMessage">
+                <!-- Status text injected here -->
+              </div>
+              <span class="badge-subtle" id="statusBadge">6 ISSUES</span>
+            </div>
+
+            <!-- 4 Statistic Cards -->
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-num" id="statTotalRows">6</div>
+                <div class="metric-title">Total Rows</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-num success" id="statValidRows">2</div>
+                <div class="metric-title">Valid Rows</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-num danger" id="statInvalidRows">4</div>
+                <div class="metric-title">Invalid Rows</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-num danger" id="statTotalIssues">6</div>
+                <div class="metric-title">Issues Found</div>
+              </div>
+            </div>
+
+            <!-- Issue Filter Chips -->
+            <div class="filters-bar" id="filtersBar">
+              <div class="chips-group" id="chipsGroup">
+                <button class="chip active" onclick="filterIssues('all')">All (<span id="countAll">0</span>)</button>
+                <button class="chip" onclick="filterIssues('missing')">Missing (<span id="countMissing">0</span>)</button>
+                <button class="chip" onclick="filterIssues('duplicate')">Duplicates (<span id="countDupes">0</span>)</button>
+                <button class="chip" onclick="filterIssues('type')">Types (<span id="countTypes">0</span>)</button>
+              </div>
+            </div>
+
+            <!-- Issues Table -->
+            <div class="table-container" id="tableContainer">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 70px;">Row</th>
+                    <th style="width: 130px;">Column</th>
+                    <th style="width: 140px;">Issue</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody id="issuesTableBody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Example CSV Scenarios Section -->
+  <section class="scenarios-section">
+    <div class="section-headline">
+      <h2>Explore Example Datasets</h2>
+      <p>Click any scenario below to load it into the workspace and test RowProof's real-time detection.</p>
     </div>
 
-    <!-- Results Section -->
-    <div id="resultsDashboard" class="results-card">
-      <div class="card-header">
-        <div class="card-title">📊 Validation Audit Report</div>
-        <button class="btn-export" onclick="downloadAuditJSON()">
-          📥 Export validation-report.json
-        </button>
-      </div>
-
-      <div id="statusBanner" class="status-header status-fail">
-        <!-- Rendered by JS -->
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpiRows">6</div>
-          <div class="kpi-label">Total Rows Scanned</div>
+    <div class="scenarios-grid">
+      <!-- Scenario 1: Clean Data -->
+      <div class="scenario-card" onclick="loadPreset('clean')">
+        <div>
+          <div class="sc-header">
+            <span style="color:var(--accent);">●</span> Clean Data
+          </div>
+          <div class="sc-desc">A valid roster of university students with complete records, correct types, and unique emails.</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpiErrors" style="color: var(--danger);">6</div>
-          <div class="kpi-label">Defects Flagged</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpiHealth">0%</div>
-          <div class="kpi-label">Data Health Score</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-value" id="kpiStatus" style="font-size: 1.5rem;">FAIL</div>
-          <div class="kpi-label">Verdict</div>
+        <div class="sc-btn">
+          Load scenario →
         </div>
       </div>
 
-      <div id="issuesTableSection">
-        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.85rem; color: #0f172a;">
-          Detailed Data Quality Violations
-        </h3>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 80px;">Row #</th>
-                <th style="width: 150px;">Column</th>
-                <th style="width: 180px;">Rule Enforced</th>
-                <th>Violation Message</th>
-              </tr>
-            </thead>
-            <tbody id="errorRows">
-              <!-- Rendered by JS -->
-            </tbody>
-          </table>
+      <!-- Scenario 2: Missing Values -->
+      <div class="scenario-card" onclick="loadPreset('missing')">
+        <div>
+          <div class="sc-header">
+            <span style="color:var(--error);">●</span> Missing Values
+          </div>
+          <div class="sc-desc">Identifies blank cells in required columns like missing full names and missing email addresses.</div>
+        </div>
+        <div class="sc-btn">
+          Load scenario →
+        </div>
+      </div>
+
+      <!-- Scenario 3: Duplicate Records -->
+      <div class="scenario-card" onclick="loadPreset('duplicates')">
+        <div>
+          <div class="sc-header">
+            <span style="color:#7C3AED;">●</span> Duplicate Records
+          </div>
+          <div class="sc-desc">Detects identical rows repeated in the dataset as well as duplicate unique email identifiers.</div>
+        </div>
+        <div class="sc-btn">
+          Load scenario →
+        </div>
+      </div>
+
+      <!-- Scenario 4: Invalid Types -->
+      <div class="scenario-card" onclick="loadPreset('types')">
+        <div>
+          <div class="sc-header">
+            <span style="color:var(--warning);">●</span> Invalid Data Types
+          </div>
+          <div class="sc-desc">Catches string values in integer age columns, invalid emails, and incorrect booleans.</div>
+        </div>
+        <div class="sc-btn">
+          Load scenario →
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <footer>
-    <p>Built with ❤️ by <strong>Harsh</strong> for College BTech CSE Assignment • Powered by <strong>rowproof@1.0.0</strong></p>
+  <!-- Minimal SaaS Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="name">RowProof</div>
+        <div class="tag">Validate your rows. Trust your data.</div>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/harshhh-08/rowproof#readme" target="_blank">Documentation</a>
+        <a href="https://github.com/harshhh-08/rowproof" target="_blank">Source Code</a>
+        <a href="https://github.com/harshhh-08/rowproof-demo" target="_blank">Demo Repository</a>
+        <a href="https://www.npmjs.com/package/rowproof" target="_blank">npm Registry</a>
+        <span>MIT License © 2026</span>
+      </div>
+    </div>
   </footer>
 
   <script>
-    // Embedded RowProof Client Engine (100% resilient fallback)
+    // PRESET SCENARIO DATASETS
+    const SCENARIOS = {
+      clean: {
+        name: "students_clean.csv",
+        size: "186 bytes",
+        csv: `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,Diya Patel,diya@university.edu,22,true
+103,Rohan Verma,rohan@university.edu,20,false
+104,Priya Singh,priya@university.edu,23,true`,
+        required: "id, name, email, age",
+        unique: "id, email",
+        types: "id: integer, age: number, email: email, enrolled: boolean"
+      },
+      missing: {
+        name: "students_missing_values.csv",
+        size: "164 bytes",
+        csv: `id,name,email,age
+101,Aarav Sharma,aarav@university.edu,21
+102,,diya@university.edu,22
+103,Rohan Verma,,20
+104,,priya@university.edu,23`,
+        required: "id, name, email, age",
+        unique: "email",
+        types: "age: number, email: email"
+      },
+      duplicates: {
+        name: "students_duplicates.csv",
+        size: "210 bytes",
+        csv: `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,Diya Patel,diya@university.edu,22,true
+103,Rohan Verma,aarav@university.edu,20,true
+101,Aarav Sharma,aarav@university.edu,21,true`,
+        required: "id, name, email",
+        unique: "email",
+        types: "age: number"
+      },
+      types: {
+        name: "students_invalid_types.csv",
+        size: "192 bytes",
+        csv: `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,Diya Patel,diya_email_without_at,twenty_two,maybe
+103,Rohan Verma,rohan@university.edu,invalid_age,yes`,
+        required: "id, name, email, age",
+        unique: "email",
+        types: "id: integer, age: number, email: email, enrolled: boolean"
+      }
+    };
+
+    let currentReport = null;
+    let currentFilter = "all";
+
+    // Client-side RFC 4180 parsing engine
     function parseCSV(content) {
       const text = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
       const rawRows = [];
@@ -652,10 +1160,9 @@
 
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
-        const nextChar = text[i + 1];
-
+        const next = text[i + 1];
         if (char === '"') {
-          if (insideQuotes && nextChar === '"') {
+          if (insideQuotes && next === '"') {
             currentField += '"';
             i++;
           } else {
@@ -673,65 +1180,59 @@
           currentField += char;
         }
       }
-
       if (currentField.length > 0 || currentRow.length > 0) {
         currentRow.push(currentField);
         rawRows.push(currentRow);
       }
 
       if (rawRows.length === 0) return { headers: [], rows: [] };
-
       const headers = rawRows[0].map(h => h.trim());
       const structuredRows = [];
 
       for (let i = 1; i < rawRows.length; i++) {
-        const rawLine = rawRows[i];
+        const line = rawRows[i];
         const rowNumber = i + 1;
-        const isEmpty = rawLine.length === 0 || rawLine.every(val => val.trim() === "");
-        const rowData = {};
-        headers.forEach((header, colIndex) => {
-          rowData[header] = rawLine[colIndex] !== undefined ? rawLine[colIndex].trim() : "";
+        const isEmpty = line.length === 0 || line.every(v => v.trim() === "");
+        const data = {};
+        headers.forEach((h, idx) => {
+          data[h] = line[idx] !== undefined ? line[idx].trim() : "";
         });
-
-        structuredRows.push({ rowNumber, data: rowData, isEmpty });
+        structuredRows.push({ rowNumber, data, isEmpty });
       }
 
       return { headers, rows: structuredRows };
     }
 
-    function isBlank(val) {
-      return val === undefined || val === null || String(val).trim() === "";
+    function isBlank(v) {
+      return v === undefined || v === null || String(v).trim() === "";
     }
 
-    function isValidType(value, expectedType) {
-      if (isBlank(value)) return true;
-      const trimmed = String(value).trim();
-      switch (expectedType.toLowerCase()) {
-        case "number": return !isNaN(Number(trimmed));
-        case "integer": {
-          const num = Number(trimmed);
-          return !isNaN(num) && Number.isInteger(num);
-        }
-        case "boolean": return ["true", "false", "1", "0", "yes", "no"].includes(trimmed.toLowerCase());
-        case "date": return !isNaN(Date.parse(trimmed));
-        case "email": return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+    function isValidType(v, type) {
+      if (isBlank(v)) return true;
+      const val = String(v).trim();
+      switch (type.toLowerCase()) {
+        case "number": return !isNaN(Number(val));
+        case "integer": return !isNaN(Number(val)) && Number.isInteger(Number(val));
+        case "boolean": return ["true", "false", "1", "0", "yes", "no"].includes(val.toLowerCase());
+        case "date": return !isNaN(Date.parse(val));
+        case "email": return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
         default: return true;
       }
     }
 
-    function validateCSVData(parsedData, options = {}) {
+    function validateCSV(parsed, opts = {}) {
       const errors = [];
-      const { headers, rows } = parsedData;
-      const required = options.required || [];
-      const unique = options.unique || [];
-      const types = options.types || {};
+      const { headers, rows } = parsed;
+      const required = opts.required || [];
+      const unique = opts.unique || [];
+      const types = opts.types || {};
 
       for (const col of required) {
         if (!headers.includes(col)) {
           errors.push({
             row: 1,
             column: col,
-            rule: "required_column",
+            rule: "missing_column",
             message: `Required column '${col}' is missing in CSV headers.`
           });
         }
@@ -740,14 +1241,16 @@
       const seenUnique = {};
       unique.forEach(col => { seenUnique[col] = new Map(); });
       const seenRows = new Map();
+      const invalidRowIndexes = new Set();
 
       for (const item of rows) {
         const { rowNumber, data, isEmpty } = item;
 
         if (isEmpty) {
+          invalidRowIndexes.add(rowNumber);
           errors.push({
             row: rowNumber,
-            column: null,
+            column: "—",
             rule: "empty_row",
             message: `Row ${rowNumber} is completely empty.`
           });
@@ -756,11 +1259,12 @@
 
         const sig = JSON.stringify(data);
         if (seenRows.has(sig)) {
+          invalidRowIndexes.add(rowNumber);
           errors.push({
             row: rowNumber,
-            column: null,
+            column: "—",
             rule: "duplicate_record",
-            message: `Duplicate record found. Row ${rowNumber} is identical to row ${seenRows.get(sig)}.`
+            message: `Duplicate record found. Identical to row ${seenRows.get(sig)}.`
           });
         } else {
           seenRows.set(sig, rowNumber);
@@ -768,6 +1272,7 @@
 
         for (const col of required) {
           if (headers.includes(col) && isBlank(data[col])) {
+            invalidRowIndexes.add(rowNumber);
             errors.push({
               row: rowNumber,
               column: col,
@@ -781,11 +1286,12 @@
           if (headers.includes(col) && !isBlank(data[col])) {
             const val = data[col];
             if (seenUnique[col].has(val)) {
+              invalidRowIndexes.add(rowNumber);
               errors.push({
                 row: rowNumber,
                 column: col,
-                rule: "unique_violation",
-                message: `Duplicate value '${val}' in column '${col}'. Already exists in row ${seenUnique[col].get(val)}.`
+                rule: "duplicate_value",
+                message: `Duplicate value '${val}' in column '${col}'. Already in row ${seenUnique[col].get(val)}.`
               });
             } else {
               seenUnique[col].set(val, rowNumber);
@@ -795,6 +1301,7 @@
 
         for (const [col, expected] of Object.entries(types)) {
           if (headers.includes(col) && !isBlank(data[col]) && !isValidType(data[col], expected)) {
+            invalidRowIndexes.add(rowNumber);
             errors.push({
               row: rowNumber,
               column: col,
@@ -805,201 +1312,279 @@
         }
       }
 
+      const totalRows = rows.length;
+      const invalidRows = invalidRowIndexes.size;
+      const validRows = Math.max(0, totalRows - invalidRows);
+
       return {
         isValid: errors.length === 0,
-        totalRows: rows.length,
+        totalRows,
+        validRows,
+        invalidRows,
         totalErrors: errors.length,
         headers,
         errors
       };
     }
 
-    // Datasets
-    const PRESET_DIRTY = `id,name,email,age,enrolled
-101,Aarav Sharma,aarav@university.edu,21,true
-102,,diya@university.edu,not_a_number,true
-103,Rohan Verma,aarav@university.edu,20,yes
-104,Priya Singh,priya@university.edu,23,true
-101,Aarav Sharma,aarav@university.edu,21,true
-,,`;
+    // Toggle raw text editor
+    let editorVisible = true;
+    function toggleRawEditor() {
+      editorVisible = !editorVisible;
+      document.getElementById("rawEditorWrap").style.display = editorVisible ? "block" : "none";
+      document.getElementById("editorToggleLabel").textContent = editorVisible ? "Collapse editor ▴" : "Edit CSV text ▾";
+    }
 
-    const PRESET_CLEAN = `id,name,email,age,enrolled
-101,Aarav Sharma,aarav@university.edu,21,true
-102,Diya Patel,diya@university.edu,22,true
-103,Rohan Verma,rohan@university.edu,20,false
-104,Priya Singh,priya@university.edu,23,true`;
+    // Load Scenario Preset
+    function loadPreset(key) {
+      const scenario = SCENARIOS[key];
+      if (!scenario) return;
 
-    const PRESET_SCHEMA = `id,fullName,phoneNumber
-1,Alice Johnson,+1-555-0100
-2,Bob Williams,+1-555-0101`;
+      document.getElementById("csvTextInput").value = scenario.csv;
+      document.getElementById("ruleRequired").value = scenario.required;
+      document.getElementById("ruleUnique").value = scenario.unique;
+      document.getElementById("ruleTypes").value = scenario.types;
 
-    let activeReport = null;
+      showFileMeta(scenario.name, scenario.size);
+      triggerValidation();
 
-    function setTabActive(activeId) {
-      ["tabDirty", "tabClean", "tabMissing"].forEach(id => {
-        document.getElementById(id).classList.toggle("active", id === activeId);
+      // Scroll smoothly to workspace
+      document.getElementById("workspace").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function showFileMeta(name, size) {
+      document.getElementById("fileMetaName").textContent = name;
+      document.getElementById("fileMetaSize").textContent = `(${size})`;
+      document.getElementById("fileMeta").classList.add("active");
+    }
+
+    function clearLoadedFile() {
+      document.getElementById("fileMeta").classList.remove("active");
+      document.getElementById("csvTextInput").value = "";
+    }
+
+    // File Drop & Select
+    const dropArea = document.getElementById("dropArea");
+    const fileInput = document.getElementById("fileInput");
+
+    ["dragenter", "dragover"].forEach(evtName => {
+      dropArea.addEventListener(evtName, (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
       });
-    }
-
-    function loadDirtyPreset() {
-      setTabActive("tabDirty");
-      document.getElementById("csvInput").value = PRESET_DIRTY;
-      document.getElementById("requiredCols").value = "id, name, email, age";
-      document.getElementById("uniqueCols").value = "email";
-      document.getElementById("typesCols").value = "id: integer, age: number, email: email, enrolled: boolean";
-      executeValidation();
-    }
-
-    function loadCleanPreset() {
-      setTabActive("tabClean");
-      document.getElementById("csvInput").value = PRESET_CLEAN;
-      document.getElementById("requiredCols").value = "id, name, email, age";
-      document.getElementById("uniqueCols").value = "id, email";
-      document.getElementById("typesCols").value = "id: integer, age: number, email: email, enrolled: boolean";
-      executeValidation();
-    }
-
-    function loadSchemaMismatchPreset() {
-      setTabActive("tabMissing");
-      document.getElementById("csvInput").value = PRESET_SCHEMA;
-      document.getElementById("requiredCols").value = "id, fullName, email";
-      document.getElementById("uniqueCols").value = "";
-      document.getElementById("typesCols").value = "id: integer";
-      executeValidation();
-    }
-
-    function resetDefaults() {
-      document.getElementById("requiredCols").value = "id, name, email, age";
-      document.getElementById("uniqueCols").value = "email";
-      document.getElementById("typesCols").value = "id: integer, age: number, email: email, enrolled: boolean";
-    }
-
-    document.getElementById("csvFileInput").addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        document.getElementById("csvInput").value = evt.target.result;
-        executeValidation();
-      };
-      reader.readAsText(file);
     });
 
-    async function executeValidation() {
-      const csvText = document.getElementById("csvInput").value.trim();
+    ["dragleave", "drop"].forEach(evtName => {
+      dropArea.addEventListener(evtName, (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+      });
+    });
+
+    dropArea.addEventListener("drop", (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length > 0) handleFile(e.target.files[0]);
+    });
+
+    function handleFile(file) {
+      const sizeStr = file.size < 1024 ? `${file.size} B` : `${(file.size / 1024).toFixed(1)} KB`;
+      showFileMeta(file.name, sizeStr);
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById("csvTextInput").value = e.target.result;
+        triggerValidation();
+      };
+      reader.readAsText(file);
+    }
+
+    // Validation Execution
+    async function triggerValidation() {
+      const csvText = document.getElementById("csvTextInput").value.trim();
       if (!csvText) {
-        alert("Please enter CSV content to validate.");
+        alert("Please upload a CSV file or enter CSV data.");
         return;
       }
 
-      const required = document.getElementById("requiredCols").value
+      const required = document.getElementById("ruleRequired").value
         .split(",").map(s => s.trim()).filter(Boolean);
-      const unique = document.getElementById("uniqueCols").value
+      const unique = document.getElementById("ruleUnique").value
         .split(",").map(s => s.trim()).filter(Boolean);
-      
+
       const types = {};
-      document.getElementById("typesCols").value.split(",").forEach(pair => {
+      document.getElementById("ruleTypes").value.split(",").forEach(pair => {
         const [k, v] = pair.split(":").map(s => s.trim());
         if (k && v) types[k] = v;
       });
 
       const options = { required, unique, types };
 
-      // Try serverless API first; fallback seamlessly to client engine
+      // Button loading indicator
+      const btn = document.getElementById("btnValidate");
+      btn.innerHTML = `<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> Validating...`;
+
       try {
-        const response = await fetch("/api/validate", {
+        // Call Vercel serverless endpoint
+        const res = await fetch("/api/validate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ csvText, options })
         });
-        if (response.ok && response.headers.get("content-type")?.includes("json")) {
-          activeReport = await response.json();
+
+        if (res.ok && res.headers.get("content-type")?.includes("json")) {
+          const apiReport = await res.json();
+          const parsed = parseCSV(csvText);
+          const local = validateCSV(parsed, options);
+          currentReport = {
+            ...apiReport,
+            validRows: local.validRows,
+            invalidRows: local.invalidRows
+          };
         } else {
-          activeReport = validateCSVData(parseCSV(csvText), options);
+          currentReport = validateCSV(parseCSV(csvText), options);
         }
-      } catch (e) {
-        activeReport = validateCSVData(parseCSV(csvText), options);
+      } catch (err) {
+        currentReport = validateCSV(parseCSV(csvText), options);
+      } finally {
+        btn.innerHTML = `
+          <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Validate CSV
+        `;
       }
 
-      renderReportUI(activeReport);
+      displayResults(currentReport);
     }
 
-    function renderReportUI(report) {
-      const banner = document.getElementById("statusBanner");
-      const kpiRows = document.getElementById("kpiRows");
-      const kpiErrors = document.getElementById("kpiErrors");
-      const kpiHealth = document.getElementById("kpiHealth");
-      const kpiStatus = document.getElementById("kpiStatus");
-      const tableBody = document.getElementById("errorRows");
-      const tableSection = document.getElementById("issuesTableSection");
+    function displayResults(report) {
+      document.getElementById("emptyState").style.display = "none";
+      document.getElementById("resultsContent").classList.add("active");
+      document.getElementById("btnExport").style.display = "inline-flex";
 
-      kpiRows.textContent = report.totalRows;
-      kpiErrors.textContent = report.totalErrors;
-
-      const healthScore = report.totalRows > 0 
-        ? Math.max(0, Math.round(((report.totalRows - report.totalErrors) / report.totalRows) * 100))
-        : 100;
-      kpiHealth.textContent = `${healthScore}%`;
+      // Status Alert
+      const alert = document.getElementById("statusAlert");
+      const msg = document.getElementById("statusMessage");
+      const badge = document.getElementById("statusBadge");
 
       if (report.isValid) {
-        banner.className = "status-header status-pass";
-        banner.innerHTML = `
-          <div class="status-title">
-            <span>✅</span> CSV Passed All RowProof Data Quality Checks!
-          </div>
-          <div style="font-weight: 600; font-size: 0.95rem;">Clean Data Pipeline Ready</div>
+        alert.className = "status-alert pass";
+        msg.innerHTML = `
+          <svg style="width:20px;height:20px;color:var(--accent);" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          CSV verified: No issues found
         `;
-        kpiErrors.style.color = "var(--success)";
-        kpiStatus.textContent = "PASS";
-        kpiStatus.style.color = "var(--success)";
-        tableSection.classList.add("hidden");
+        badge.textContent = "PASSED";
+        badge.style.color = "var(--accent-dark)";
+        badge.style.background = "white";
       } else {
-        banner.className = "status-header status-fail";
-        banner.innerHTML = `
-          <div class="status-title">
-            <span>⚠️</span> Data Quality Audit Failed (${report.totalErrors} issues flagged)
-          </div>
-          <div style="font-weight: 600; font-size: 0.95rem;">Review violations below</div>
+        alert.className = "status-alert fail";
+        msg.innerHTML = `
+          <svg style="width:20px;height:20px;color:var(--error);" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          Validation failed: Issues detected
         `;
-        kpiErrors.style.color = "var(--danger)";
-        kpiStatus.textContent = "FAIL";
-        kpiStatus.style.color = "var(--danger)";
-        tableSection.classList.remove("hidden");
-
-        tableBody.innerHTML = "";
-        report.errors.forEach(err => {
-          const tr = document.createElement("tr");
-
-          let ruleClass = "tag-rule";
-          if (err.rule === "missing_value" || err.rule === "required_column") ruleClass += " tag-missing";
-          else if (err.rule === "invalid_type") ruleClass += " tag-type";
-          else if (err.rule === "unique_violation" || err.rule === "duplicate_record") ruleClass += " tag-unique";
-          else ruleClass += " tag-empty";
-
-          tr.innerHTML = `
-            <td><strong>${err.row !== null ? err.row : "Header"}</strong></td>
-            <td><code>${err.column || "—"}</code></td>
-            <td><span class="${ruleClass}">${err.rule}</span></td>
-            <td>${err.message}</td>
-          `;
-          tableBody.appendChild(tr);
-        });
+        badge.textContent = `${report.totalErrors} ISSUES`;
+        badge.style.color = "var(--error-dark)";
+        badge.style.background = "white";
       }
+
+      // Stats Cards
+      document.getElementById("statTotalRows").textContent = report.totalRows;
+      document.getElementById("statValidRows").textContent = report.validRows !== undefined ? report.validRows : (report.isValid ? report.totalRows : 0);
+      document.getElementById("statInvalidRows").textContent = report.invalidRows !== undefined ? report.invalidRows : (report.isValid ? 0 : report.totalRows);
+      document.getElementById("statTotalIssues").textContent = report.totalErrors;
+
+      // Update Counts
+      const errors = report.errors || [];
+      const missingCount = errors.filter(e => e.rule === "missing_value" || e.rule === "missing_column").length;
+      const dupeCount = errors.filter(e => e.rule === "duplicate_record" || e.rule === "duplicate_value").length;
+      const typeCount = errors.filter(e => e.rule === "invalid_type").length;
+
+      document.getElementById("countAll").textContent = errors.length;
+      document.getElementById("countMissing").textContent = missingCount;
+      document.getElementById("countDupes").textContent = dupeCount;
+      document.getElementById("countTypes").textContent = typeCount;
+
+      renderIssuesTable(errors);
     }
 
-    function downloadAuditJSON() {
-      if (!activeReport) return;
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeReport, null, 2));
+    function filterIssues(category) {
+      currentFilter = category;
+      const chips = document.querySelectorAll("#chipsGroup .chip");
+      chips.forEach(c => c.classList.remove("active"));
+      event.target.classList.add("active");
+
+      if (!currentReport) return;
+      const allErrors = currentReport.errors || [];
+
+      let filtered = allErrors;
+      if (category === "missing") {
+        filtered = allErrors.filter(e => e.rule === "missing_value" || e.rule === "missing_column");
+      } else if (category === "duplicate") {
+        filtered = allErrors.filter(e => e.rule === "duplicate_record" || e.rule === "duplicate_value");
+      } else if (category === "type") {
+        filtered = allErrors.filter(e => e.rule === "invalid_type");
+      }
+
+      renderIssuesTable(filtered);
+    }
+
+    function renderIssuesTable(errors) {
+      const tbody = document.getElementById("issuesTableBody");
+      const tableContainer = document.getElementById("tableContainer");
+      const filtersBar = document.getElementById("filtersBar");
+
+      if (errors.length === 0) {
+        tableContainer.style.display = "none";
+        filtersBar.style.display = "none";
+        return;
+      }
+
+      tableContainer.style.display = "block";
+      filtersBar.style.display = "flex";
+      tbody.innerHTML = "";
+
+      errors.forEach(err => {
+        const tr = document.createElement("tr");
+
+        let badgeClass = "badge-missing";
+        let ruleLabel = err.rule.replace("_", " ");
+        if (err.rule.includes("type")) badgeClass = "badge-type";
+        else if (err.rule.includes("duplicate")) badgeClass = "badge-duplicate";
+        else if (err.rule.includes("empty")) badgeClass = "badge-empty";
+
+        tr.innerHTML = `
+          <td><strong>${err.row !== null ? err.row : "Header"}</strong></td>
+          <td><code>${err.column || "—"}</code></td>
+          <td><span class="badge-rule ${badgeClass}">${ruleLabel}</span></td>
+          <td>${err.message}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function downloadJSONReport() {
+      if (!currentReport) return;
+      const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentReport, null, 2));
       const a = document.createElement("a");
-      a.href = dataStr;
-      a.download = "validation-report.json";
+      a.href = jsonStr;
+      a.download = "rowproof-validation-report.json";
       document.body.appendChild(a);
       a.click();
       a.remove();
     }
 
-    // Auto-load dirty scenario on start
-    window.onload = loadDirtyPreset;
+    // Auto-load dirty scenario on initial landing
+    window.onload = () => {
+      loadPreset("duplicates");
+    };
   </script>
 </body>
 </html>
