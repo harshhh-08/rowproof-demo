@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RowProof — CSV Data Quality Validator Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Evaluation Banner */
+    .eval-banner {
+      background: linear-gradient(90deg, #1e1b4b, #312e81);
+      color: #e0e7ff;
+      padding: 0.55rem 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .eval-banner span {
+      background: rgba(255,255,255,0.15);
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      margin-right: 0.5rem;
+    }
+
+    /* Navigation */
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .pill-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: white;
+      color: #334155;
+    }
+    .pill-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .pill-npm {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #dc2626;
+    }
+    .pill-npm:hover { background: #fee2e2; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 2rem 1.5rem 2.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 960px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      transition: all 0.2s;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Preset Buttons */
+    .preset-container {
+      margin-bottom: 1rem;
+    }
+    .preset-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .preset-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-tab {
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #334155;
+      transition: all 0.15s;
+    }
+    .btn-tab:hover {
+      background: #e2e8f0;
+    }
+    .btn-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+    }
+
+    /* Code Editor Box */
+    .editor-wrapper {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      padding: 1rem;
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 0.75rem;
+      border: 1px solid #334155;
+      line-height: 1.6;
+      resize: vertical;
+      white-space: pre;
+    }
+    textarea:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    /* Rules Settings */
+    .rule-item {
+      margin-bottom: 1.25rem;
+    }
+    .rule-item label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 0.35rem;
+    }
+    .rule-item input {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: #f8fafc;
+      color: #0f172a;
+      transition: all 0.15s;
+    }
+    .rule-item input:focus {
+      background: white;
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+    .rule-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Validate Button */
+    .btn-run {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 0.75rem;
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-run:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.45);
+    }
+    .btn-run:active {
+      transform: translateY(0);
+    }
+
+    /* Results Dashboard */
+    .results-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      margin-top: 1rem;
+    }
+
+    .status-header {
+      padding: 1.25rem 1.5rem;
+      border-radius: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .status-pass {
+      background: var(--success-light);
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+    .status-fail {
+      background: var(--danger-light);
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+    .status-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 768px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .kpi-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Table */
+    .table-responsive {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: #1e293b;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .tag-rule {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.02em;
+    }
+    .tag-missing { background: #fee2e2; color: #991b1b; }
+    .tag-type { background: #fef3c7; color: #92400e; }
+    .tag-unique { background: #ede9fe; color: #5b21b6; }
+    .tag-empty { background: #f1f5f9; color: #475569; }
+
+    .btn-export {
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #334155;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+    }
+    .btn-export:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      border-top: 1px solid var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Academic Evaluation Header -->
+  <div class="eval-banner">
+    <span>🎓 ACADEMIC PROJECT EVALUATION</span> RowProof Live Deployment Demonstration — CSE BTech Capstone
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="brand">
+      <div class="logo-badge">RP</div>
+      <div>
+        <div class="brand-title">RowProof</div>
+        <div class="brand-subtitle">CSV Data Quality Validator</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="pill-link pill-npm" href="https://www.npmjs.com/package/rowproof" target="_blank">
+        📦 npm rowproof@1.0.0
+      </a>
+      <a class="pill-link" href="https://github.com/harshhh-08/rowproof" target="_blank">
+        📂 Source Code
+      </a>
+      <a class="pill-link" href="https://github.com/harshhh-08/rowproof-demo" target="_blank">
+        ⭐ Demo Repository
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-badge">⚡ Published npm Package in Action</div>
+    <h1>Validate your rows. <br><span class="gradient-text">Trust your data.</span></h1>
+    <p>Test CSV data quality with missing value checks, schema validation, type constraints, and duplicate row detection.</p>
+  </section>
+
+  <!-- Workspace Container -->
+  <div class="container">
+    <div class="workspace-grid">
+      
+      <!-- Left Column: CSV Editor -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📄 CSV Input Dataset</div>
+          <label for="csvFileInput" class="btn-export" style="cursor: pointer;">
+            📁 Upload .csv
+          </label>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+        </div>
+
+        <div class="preset-container">
+          <div class="preset-label">Choose an Evaluator Test Scenario:</div>
+          <div class="preset-tabs">
+            <button class="btn-tab active" id="tabDirty" onclick="loadDirtyPreset()">⚠️ Scenario 1: Dirty CSV (6 Defects)</button>
+            <button class="btn-tab" id="tabClean" onclick="loadCleanPreset()">✅ Scenario 2: Clean CSV (All Valid)</button>
+            <button class="btn-tab" id="tabMissing" onclick="loadSchemaMismatchPreset()">❌ Scenario 3: Missing Header</button>
+          </div>
+        </div>
+
+        <div class="editor-wrapper">
+          <textarea id="csvInput" placeholder="Enter or paste CSV rows here..."></textarea>
+        </div>
+      </div>
+
+      <!-- Right Column: Validation Rules & Controls -->
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div class="card-header">
+            <div class="card-title">⚙️ Data Quality Rules</div>
+            <button class="btn-export" onclick="resetDefaults()" style="font-size: 0.75rem;">Reset Rules</button>
+          </div>
+
+          <div class="rule-item">
+            <label>Required Columns:</label>
+            <input type="text" id="requiredCols" value="id, name, email, age">
+            <div class="rule-hint">Headers must exist and row values must not be blank.</div>
+          </div>
+
+          <div class="rule-item">
+            <label>Unique Columns:</label>
+            <input type="text" id="uniqueCols" value="email">
+            <div class="rule-hint">Flags rows containing duplicate entries for these columns.</div>
+          </div>
+
+          <div class="rule-item">
+            <label>Enforced Data Types:</label>
+            <input type="text" id="typesCols" value="id: integer, age: number, email: email, enrolled: boolean">
+            <div class="rule-hint">Supported: <code>number</code>, <code>integer</code>, <code>boolean</code>, <code>email</code>, <code>date</code>.</div>
+          </div>
+        </div>
+
+        <div>
+          <button class="btn-run" id="btnValidate" onclick="executeValidation()">
+            <span>⚡ Validate Rows with RowProof</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsDashboard" class="results-card">
+      <div class="card-header">
+        <div class="card-title">📊 Validation Audit Report</div>
+        <button class="btn-export" onclick="downloadAuditJSON()">
+          📥 Export validation-report.json
+        </button>
+      </div>
+
+      <div id="statusBanner" class="status-header status-fail">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiRows">6</div>
+          <div class="kpi-label">Total Rows Scanned</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiErrors" style="color: var(--danger);">6</div>
+          <div class="kpi-label">Defects Flagged</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiHealth">0%</div>
+          <div class="kpi-label">Data Health Score</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiStatus" style="font-size: 1.5rem;">FAIL</div>
+          <div class="kpi-label">Verdict</div>
+        </div>
+      </div>
+
+      <div id="issuesTableSection">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.85rem; color: #0f172a;">
+          Detailed Data Quality Violations
+        </h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 80px;">Row #</th>
+                <th style="width: 150px;">Column</th>
+                <th style="width: 180px;">Rule Enforced</th>
+                <th>Violation Message</th>
+              </tr>
+            </thead>
+            <tbody id="errorRows">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built with ❤️ by <strong>Harsh</strong> for College BTech CSE Assignment • Powered by <strong>rowproof@1.0.0</strong></p>
+  </footer>
+
+  <script>
+    // Embedded RowProof Client Engine (100% resilient fallback)
+    function parseCSV(content) {
+      const text = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+      const rawRows = [];
+      let currentRow = [];
+      let currentField = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentField += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === "," && !insideQuotes) {
+          currentRow.push(currentField);
+          currentField = "";
+        } else if (char === "\n" && !insideQuotes) {
+          currentRow.push(currentField);
+          rawRows.push(currentRow);
+          currentRow = [];
+          currentField = "";
+        } else {
+          currentField += char;
+        }
+      }
+
+      if (currentField.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentField);
+        rawRows.push(currentRow);
+      }
+
+      if (rawRows.length === 0) return { headers: [], rows: [] };
+
+      const headers = rawRows[0].map(h => h.trim());
+      const structuredRows = [];
+
+      for (let i = 1; i < rawRows.length; i++) {
+        const rawLine = rawRows[i];
+        const rowNumber = i + 1;
+        const isEmpty = rawLine.length === 0 || rawLine.every(val => val.trim() === "");
+        const rowData = {};
+        headers.forEach((header, colIndex) => {
+          rowData[header] = rawLine[colIndex] !== undefined ? rawLine[colIndex].trim() : "";
+        });
+
+        structuredRows.push({ rowNumber, data: rowData, isEmpty });
+      }
+
+      return { headers, rows: structuredRows };
+    }
+
+    function isBlank(val) {
+      return val === undefined || val === null || String(val).trim() === "";
+    }
+
+    function isValidType(value, expectedType) {
+      if (isBlank(value)) return true;
+      const trimmed = String(value).trim();
+      switch (expectedType.toLowerCase()) {
+        case "number": return !isNaN(Number(trimmed));
+        case "integer": {
+          const num = Number(trimmed);
+          return !isNaN(num) && Number.isInteger(num);
+        }
+        case "boolean": return ["true", "false", "1", "0", "yes", "no"].includes(trimmed.toLowerCase());
+        case "date": return !isNaN(Date.parse(trimmed));
+        case "email": return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+        default: return true;
+      }
+    }
+
+    function validateCSVData(parsedData, options = {}) {
+      const errors = [];
+      const { headers, rows } = parsedData;
+      const required = options.required || [];
+      const unique = options.unique || [];
+      const types = options.types || {};
+
+      for (const col of required) {
+        if (!headers.includes(col)) {
+          errors.push({
+            row: 1,
+            column: col,
+            rule: "required_column",
+            message: `Required column '${col}' is missing in CSV headers.`
+          });
+        }
+      }
+
+      const seenUnique = {};
+      unique.forEach(col => { seenUnique[col] = new Map(); });
+      const seenRows = new Map();
+
+      for (const item of rows) {
+        const { rowNumber, data, isEmpty } = item;
+
+        if (isEmpty) {
+          errors.push({
+            row: rowNumber,
+            column: null,
+            rule: "empty_row",
+            message: `Row ${rowNumber} is completely empty.`
+          });
+          continue;
+        }
+
+        const sig = JSON.stringify(data);
+        if (seenRows.has(sig)) {
+          errors.push({
+            row: rowNumber,
+            column: null,
+            rule: "duplicate_record",
+            message: `Duplicate record found. Row ${rowNumber} is identical to row ${seenRows.get(sig)}.`
+          });
+        } else {
+          seenRows.set(sig, rowNumber);
+        }
+
+        for (const col of required) {
+          if (headers.includes(col) && isBlank(data[col])) {
+            errors.push({
+              row: rowNumber,
+              column: col,
+              rule: "missing_value",
+              message: `Missing required value in column '${col}'.`
+            });
+          }
+        }
+
+        for (const col of unique) {
+          if (headers.includes(col) && !isBlank(data[col])) {
+            const val = data[col];
+            if (seenUnique[col].has(val)) {
+              errors.push({
+                row: rowNumber,
+                column: col,
+                rule: "unique_violation",
+                message: `Duplicate value '${val}' in column '${col}'. Already exists in row ${seenUnique[col].get(val)}.`
+              });
+            } else {
+              seenUnique[col].set(val, rowNumber);
+            }
+          }
+        }
+
+        for (const [col, expected] of Object.entries(types)) {
+          if (headers.includes(col) && !isBlank(data[col]) && !isValidType(data[col], expected)) {
+            errors.push({
+              row: rowNumber,
+              column: col,
+              rule: "invalid_type",
+              message: `Invalid ${expected} value '${data[col]}' in column '${col}'.`
+            });
+          }
+        }
+      }
+
+      return {
+        isValid: errors.length === 0,
+        totalRows: rows.length,
+        totalErrors: errors.length,
+        headers,
+        errors
+      };
+    }
+
+    // Datasets
+    const PRESET_DIRTY = `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,,diya@university.edu,not_a_number,true
+103,Rohan Verma,aarav@university.edu,20,yes
+104,Priya Singh,priya@university.edu,23,true
+101,Aarav Sharma,aarav@university.edu,21,true
+,,`;
+
+    const PRESET_CLEAN = `id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,Diya Patel,diya@university.edu,22,true
+103,Rohan Verma,rohan@university.edu,20,false
+104,Priya Singh,priya@university.edu,23,true`;
+
+    const PRESET_SCHEMA = `id,fullName,phoneNumber
+1,Alice Johnson,+1-555-0100
+2,Bob Williams,+1-555-0101`;
+
+    let activeReport = null;
+
+    function setTabActive(activeId) {
+      ["tabDirty", "tabClean", "tabMissing"].forEach(id => {
+        document.getElementById(id).classList.toggle("active", id === activeId);
+      });
+    }
+
+    function loadDirtyPreset() {
+      setTabActive("tabDirty");
+      document.getElementById("csvInput").value = PRESET_DIRTY;
+      document.getElementById("requiredCols").value = "id, name, email, age";
+      document.getElementById("uniqueCols").value = "email";
+      document.getElementById("typesCols").value = "id: integer, age: number, email: email, enrolled: boolean";
+      executeValidation();
+    }
+
+    function loadCleanPreset() {
+      setTabActive("tabClean");
+      document.getElementById("csvInput").value = PRESET_CLEAN;
+      document.getElementById("requiredCols").value = "id, name, email, age";
+      document.getElementById("uniqueCols").value = "id, email";
+      document.getElementById("typesCols").value = "id: integer, age: number, email: email, enrolled: boolean";
+      executeValidation();
+    }
+
+    function loadSchemaMismatchPreset() {
+      setTabActive("tabMissing");
+      document.getElementById("csvInput").value = PRESET_SCHEMA;
+      document.getElementById("requiredCols").value = "id, fullName, email";
+      document.getElementById("uniqueCols").value = "";
+      document.getElementById("typesCols").value = "id: integer";
+      executeValidation();
+    }
+
+    function resetDefaults() {
+      document.getElementById("requiredCols").value = "id, name, email, age";
+      document.getElementById("uniqueCols").value = "email";
+      document.getElementById("typesCols").value = "id: integer, age: number, email: email, enrolled: boolean";
+    }
+
+    document.getElementById("csvFileInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById("csvInput").value = evt.target.result;
+        executeValidation();
+      };
+      reader.readAsText(file);
+    });
+
+    async function executeValidation() {
+      const csvText = document.getElementById("csvInput").value.trim();
+      if (!csvText) {
+        alert("Please enter CSV content to validate.");
+        return;
+      }
+
+      const required = document.getElementById("requiredCols").value
+        .split(",").map(s => s.trim()).filter(Boolean);
+      const unique = document.getElementById("uniqueCols").value
+        .split(",").map(s => s.trim()).filter(Boolean);
+      
+      const types = {};
+      document.getElementById("typesCols").value.split(",").forEach(pair => {
+        const [k, v] = pair.split(":").map(s => s.trim());
+        if (k && v) types[k] = v;
+      });
+
+      const options = { required, unique, types };
+
+      // Try serverless API first; fallback seamlessly to client engine
+      try {
+        const response = await fetch("/api/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ csvText, options })
+        });
+        if (response.ok && response.headers.get("content-type")?.includes("json")) {
+          activeReport = await response.json();
+        } else {
+          activeReport = validateCSVData(parseCSV(csvText), options);
+        }
+      } catch (e) {
+        activeReport = validateCSVData(parseCSV(csvText), options);
+      }
+
+      renderReportUI(activeReport);
+    }
+
+    function renderReportUI(report) {
+      const banner = document.getElementById("statusBanner");
+      const kpiRows = document.getElementById("kpiRows");
+      const kpiErrors = document.getElementById("kpiErrors");
+      const kpiHealth = document.getElementById("kpiHealth");
+      const kpiStatus = document.getElementById("kpiStatus");
+      const tableBody = document.getElementById("errorRows");
+      const tableSection = document.getElementById("issuesTableSection");
+
+      kpiRows.textContent = report.totalRows;
+      kpiErrors.textContent = report.totalErrors;
+
+      const healthScore = report.totalRows > 0 
+        ? Math.max(0, Math.round(((report.totalRows - report.totalErrors) / report.totalRows) * 100))
+        : 100;
+      kpiHealth.textContent = `${healthScore}%`;
+
+      if (report.isValid) {
+        banner.className = "status-header status-pass";
+        banner.innerHTML = `
+          <div class="status-title">
+            <span>✅</span> CSV Passed All RowProof Data Quality Checks!
+          </div>
+          <div style="font-weight: 600; font-size: 0.95rem;">Clean Data Pipeline Ready</div>
+        `;
+        kpiErrors.style.color = "var(--success)";
+        kpiStatus.textContent = "PASS";
+        kpiStatus.style.color = "var(--success)";
+        tableSection.classList.add("hidden");
+      } else {
+        banner.className = "status-header status-fail";
+        banner.innerHTML = `
+          <div class="status-title">
+            <span>⚠️</span> Data Quality Audit Failed (${report.totalErrors} issues flagged)
+          </div>
+          <div style="font-weight: 600; font-size: 0.95rem;">Review violations below</div>
+        `;
+        kpiErrors.style.color = "var(--danger)";
+        kpiStatus.textContent = "FAIL";
+        kpiStatus.style.color = "var(--danger)";
+        tableSection.classList.remove("hidden");
+
+        tableBody.innerHTML = "";
+        report.errors.forEach(err => {
+          const tr = document.createElement("tr");
+
+          let ruleClass = "tag-rule";
+          if (err.rule === "missing_value" || err.rule === "required_column") ruleClass += " tag-missing";
+          else if (err.rule === "invalid_type") ruleClass += " tag-type";
+          else if (err.rule === "unique_violation" || err.rule === "duplicate_record") ruleClass += " tag-unique";
+          else ruleClass += " tag-empty";
+
+          tr.innerHTML = `
+            <td><strong>${err.row !== null ? err.row : "Header"}</strong></td>
+            <td><code>${err.column || "—"}</code></td>
+            <td><span class="${ruleClass}">${err.rule}</span></td>
+            <td>${err.message}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      }
+    }
+
+    function downloadAuditJSON() {
+      if (!activeReport) return;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeReport, null, 2));
+      const a = document.createElement("a");
+      a.href = dataStr;
+      a.download = "validation-report.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // Auto-load dirty scenario on start
+    window.onload = loadDirtyPreset;
+  </script>
+</body>
+</html>
