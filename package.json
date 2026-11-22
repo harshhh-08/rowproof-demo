@@ -1,0 +1,12 @@
+{
+  "name": "rowproof-demo",
+  "version": "1.0.0",
+  "description": "Demonstration project for RowProof CSV data quality validator npm package",
+  "main": "demo.js",
+  "scripts": {
+    "start": "node demo.js"
+  },
+  "dependencies": {
+    "rowproof": "^1.0.0"
+  }
+}

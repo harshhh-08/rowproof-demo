@@ -1,0 +1,50 @@
+{
+  "isValid": false,
+  "totalRows": 6,
+  "totalErrors": 6,
+  "headers": [
+    "id",
+    "name",
+    "email",
+    "age",
+    "enrolled"
+  ],
+  "errors": [
+    {
+      "row": 3,
+      "column": "name",
+      "rule": "missing_value",
+      "message": "Missing required value in column 'name'."
+    },
+    {
+      "row": 3,
+      "column": "age",
+      "rule": "invalid_type",
+      "message": "Invalid number value 'not_a_number' in column 'age'."
+    },
+    {
+      "row": 4,
+      "column": "email",
+      "rule": "unique_violation",
+      "message": "Duplicate value 'aarav@university.edu' in column 'email'. Already exists in row 2."
+    },
+    {
+      "row": 6,
+      "column": null,
+      "rule": "duplicate_record",
+      "message": "Duplicate record found. Row 6 is identical to row 2."
+    },
+    {
+      "row": 6,
+      "column": "email",
+      "rule": "unique_violation",
+      "message": "Duplicate value 'aarav@university.edu' in column 'email'. Already exists in row 2."
+    },
+    {
+      "row": 7,
+      "column": null,
+      "rule": "empty_row",
+      "message": "Row 7 is empty."
+    }
+  ]
+}

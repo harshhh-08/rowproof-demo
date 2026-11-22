@@ -1,0 +1,7 @@
+id,name,email,age,enrolled
+101,Aarav Sharma,aarav@university.edu,21,true
+102,,diya@university.edu,not_a_number,true
+103,Rohan Verma,aarav@university.edu,20,yes
+104,Priya Singh,priya@university.edu,23,true
+101,Aarav Sharma,aarav@university.edu,21,true
+,,
